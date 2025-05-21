@@ -4,6 +4,8 @@
   	<title>Profile</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
 		
@@ -93,6 +95,25 @@
         document.getElementById('scan-result').innerText = `QR Code terdeteksi: ${decodedText}`;
         // Kamu bisa redirect atau kirim data ke server di sini
         // window.location.href = `/proses/${decodedText}`;
+        // Kirim ke server Laravel
+      fetch('/scan-in', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            kode_qr: decodedText
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        alert("QR berhasil disimpan!");
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     }
 
     function startScanner() {

@@ -31,4 +31,4 @@ Route::get('/outbound-list', function () {
 })->name('outbound-list');
 
 Route::get('/generate-qr', [QrCodeController::class, 'show'])->name('generate-qr');
-Route::post('/scan-in', [QrCodeController::class, 'store']);
+Route::post('/scan-in', [QrCodeController::class, 'store'])->name('scan-in.store');
