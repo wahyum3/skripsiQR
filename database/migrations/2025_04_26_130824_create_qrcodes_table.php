@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->text('kode_qr');
             $table->string('jenis_material');
-            $table->integer('quantity');
+            $table->integer('quantity_in')->nullable();
+            $table->integer('quantity_out')->nullable();
             $table->timestamps();
         });
     }

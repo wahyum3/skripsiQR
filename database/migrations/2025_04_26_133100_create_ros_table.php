@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('ros', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_material');
+            $table->string('id_material');
             $table->string('nomor_ro');
+            $table->integer('quantity');
             $table->timestamps();
 
             // Relasi ke tabel material
-            $table->foreign('id_material')->references('id')->on('materials')->onDelete('cascade');
+            // $table->foreign('id_material')->references('id')->on('materials')->onDelete('cascade');
         });
     }
 

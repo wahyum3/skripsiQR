@@ -1,121 +1,80 @@
 <!doctype html>
 <html lang="en">
   <head>
-  	<title>Profile</title>
+    <title>Data Material Inbound</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
-		
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="SideBar/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ asset('SideBar/css/style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   </head>
   <body>
-		
-		<div class="wrapper d-flex align-items-stretch">
-			<nav id="sidebar">
-				<div class="custom-menu">
-					<button type="button" id="sidebarCollapse" class="btn btn-primary">
-	          <i class="fa fa-bars"></i>
-	          <span class="sr-only">Toggle Menu</span>
-	        </button>
-        </div>
-				<div class="p-4 pt-5">
-		  		<h1><a href="index.html" class="logo">PT TTLC</a></h1>
-	        <ul class="list-unstyled components mb-5">
-	          <li class="active">
-                  <a href="#">Profile</a>
-	          </li>
-	          
-	          <li>
-              <a href="#InboundSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Inbound</a>
-              <ul class="collapse list-unstyled" id="InboundSubmenu">
-                <li>
-                    <a href="#">Inbound</a>
-                </li>
-                <li>
-                    <a href="#">Inbound List</a>
-                </li>
-              </ul>
-	          </li>
-			  <li>
-              <a href="#OutboundSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Outbound</a>
-              <ul class="collapse list-unstyled" id="OutboundSubmenu">
-                <li>
-                    <a href="#">Outbound</a>
-                </li>
-                <li>
-                    <a href="#">Outbound List</a>
-                </li>
-              </ul>
-	          </li>
-	          <li>
-              <a href="#">List Stock</a>
-	          </li>
-	          <li>
-              <a href="#">Logout</a>
-	          </li>
-	          <!-- <li>
-              <a href="#">Contact</a>
-	          </li> -->
-	        </ul>
+    <div class="container mt-5">
+      <h2 class="mb-4">Daftar Data INBOUND Material</h2>
+      <div class="mb-4">
+        <form action="{{ route('inboundList') }}" method="GET" class="form-inline">
+          <div class="form-group mr-2">
+            <label for="no_ro" class="mr-2">Filter No RO</label>
+            <input type="text" name="no_ro" id="no_ro" value="{{ request('no_ro') }}" class="form-control">
+          </div>
 
-	        <!-- <div class="mb-5">
-						<h3 class="h6">Subscribe for newsletter</h3>
-						<form action="#" class="colorlib-subscribe-form">
-	            <div class="form-group d-flex">
-	            	<div class="icon"><span class="icon-paper-plane"></span></div>
-	              <input type="text" class="form-control" placeholder="Enter Email Address">
-	            </div>
-	          </form>
-					</div> -->
+          <div class="form-group mr-2">
+            <label for="sort" class="mr-2">Urutkan</label>
+            <select name="sort" id="sort" class="form-control">
+              <option value="">-- Pilih --</option>
+              <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A - Z</option>
+              <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z - A</option>
+            </select>
+          </div>
 
-	        <div class="footer">
-	        	<p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a>
-						  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-	        </div>
-
-	      </div>
-    	</nav>
-
-        <!-- Page Content  -->
-		@extends('layouts.app') {{-- atau sesuaikan layoutmu --}}
-
-@section('content')
-<div class="container">
-    <h2>Data Barcode</h2>
-
-    <table class="table table-bordered table-striped mt-3">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Code</th>
-                <th>Waktu Scan</th>
-            </tr>
+          <button type="submit" class="btn btn-primary">Filter</button>
+          <a href="{{ route('inboundList') }}" class="btn btn-secondary ml-2">Reset</a>
+        </form>
+      </div>
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>No RO</th>
+            <th>Kode QR</th>
+            <th>Jenis Material</th>
+            <th>Quantity</th>
+          </tr>
         </thead>
         <tbody>
-            <!-- @forelse ($barcodes as $barcode) -->
-                <tr>
-                    <td>{{ $barcode->id }}</td>
-                    <td>{{ $barcode->code }}</td>
-                    <td>{{ $barcode->created_at }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="3" class="text-center">Data belum ada</td>
-                </tr>
-            @endforelse
+        @forelse ($rosData as $ros)
+          <tr>
+            <td>{{ $ros->nomor_ro }}</td>
+            <td>{{ $ros->materialData->kode_qr ?? '-' }}</td>
+            <td>{{ $ros->materialData->jenis_material ?? $ros->id_material }}</td>
+            <td>{{ $ros->quantity }}</td>
+          </tr>
+        @empty
+          <tr>
+            <td colspan="4" class="text-center">Tidak ada data RO.</td>
+          </tr>
+        @endforelse
         </tbody>
-    </table>
-</div>
-@endsection
+      </table>
+      <div class="d-flex justify-content-between">
+        @if ($rosData->onFirstPage())
+          <span class="btn btn-secondary disabled">← Previous</span>
+        @else
+          <a href="{{ $rosData->previousPageUrl() }}" class="btn btn-primary">← Previous</a>
+        @endif
 
-		</div>
+        @if ($rosData->hasMorePages())
+          <a href="{{ $rosData->nextPageUrl() }}" class="btn btn-primary">Next →</a>
+        @else
+          <span class="btn btn-secondary disabled">Next →</span>
+        @endif
+		  </div>
+    </div>
 
-    <script src="SideBar/js/jquery.min.js"></script>
-    <script src="SideBar/js/popper.js"></script>
-    <script src="SideBar/js/bootstrap.min.js"></script>
-    <script src="SideBar/js/main.js"></script>
+    <script src="{{ asset('SideBar/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('SideBar/js/popper.js') }}"></script>
+    <script src="{{ asset('SideBar/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('SideBar/js/main.js') }}"></script>
   </body>
 </html>

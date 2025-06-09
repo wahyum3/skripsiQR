@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-  	<title>Profile</title>
+  	<title>Scanner</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -95,6 +95,10 @@
         document.getElementById('scan-result').innerText = `QR Code terdeteksi: ${decodedText}`;
         // Kamu bisa redirect atau kirim data ke server di sini
         // window.location.href = `/proses/${decodedText}`;
+        // Contoh format: "S50FF qty20"
+        const parts = decodedText.split(' qty');
+        const jenis_material = parts[0] || '';
+        const quantity_in = parseInt(parts[1]) || 0;
         // Kirim ke server Laravel
       fetch('/scan-in', {
         method: 'POST',
@@ -103,7 +107,9 @@
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
         body: JSON.stringify({
-            kode_qr: decodedText
+                kode_qr: jenis_material,        // Hanya kode, bukan qty
+                jenis_material: jenis_material,
+                quantity: quantity_in,
         })
       })
       .then(response => response.json())
@@ -141,6 +147,7 @@
     // Auto start scanner saat halaman dibuka
     window.addEventListener('load', startScanner);
 </script>
+<a href="{{ route('sortirData') }}" class="btn btn-primary">List Scan</a>
       </div>
 		</div>
 
