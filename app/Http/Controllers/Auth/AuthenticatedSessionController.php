@@ -7,6 +7,8 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -22,13 +24,32 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $request->authenticate();
+        $request->validate([
+            'id_pegawai' => 'required|string',
+            'password' => 'required',
+        ]);
 
-        $request->session()->regenerate();
+        $user = \App\Models\User::where('id_pegawai', $request->id_pegawai)->first();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        if ($user && Hash::check($request->password, $user->password)) {
+            Auth::login($user, $request->boolean('remember'));
+            $request->session()->regenerate();
+
+            // $user = Auth::user();
+            // dd('Login berhasil sebagai: ', Auth::user()->toArray());
+
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            } else {
+                return redirect()->route('layouts.chartDiagram');
+            }
+        }
+
+        return back()->withErrors([
+            'nama' => 'Nama atau password salah.',
+        ]);
     }
 
     /**

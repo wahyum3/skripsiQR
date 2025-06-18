@@ -17,7 +17,7 @@ class QrCodeController extends Controller{
 
         $combinedData = $data1 . ' qty' . $data2;
 
-        return view('qr1', ['data' => $combinedData]);
+        return view('layouts.qr1', ['data' => $combinedData]);
 
     }
 
@@ -75,7 +75,7 @@ class QrCodeController extends Controller{
         ->paginate(10) // jumlah per halaman
         ->appends($request->query()); // menjaga query string seperti ?sort=asc
 
-        return view('inboundList', compact('rosData', 'filterNoRo', 'sort'));
+        return view('layouts.inboundList', compact('rosData', 'filterNoRo', 'sort'));
     }
 
     // MENGATUR TAMPILAN HALAMAN SORTIR DATA
@@ -87,7 +87,7 @@ class QrCodeController extends Controller{
         ->orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc')
         ->get();
 
-        return view('sortirData', compact('qrcodes', 'sort'));
+        return view('layouts.sortirData', compact('qrcodes', 'sort'));
     }
 
 
@@ -162,7 +162,7 @@ class QrCodeController extends Controller{
 
         return response()->json(['message' => 'Quantity out berhasil disimpan.']);
 
-        return view('scan-out');
+        // return view('layouts.scan-out');
     }
 
     // MENGATUR HALAMAN OUTBOUND LIST
@@ -179,7 +179,7 @@ class QrCodeController extends Controller{
 
         $qrcodes = $query->paginate(10);
 
-        return view('outboundList', compact('qrcodes'));
+        return view('layouts.outboundList', compact('qrcodes'));
     }
 
     public function indexUpdate(Request $request)
@@ -189,7 +189,14 @@ class QrCodeController extends Controller{
         $qrcodes = Qrcodes::orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc')
                 ->paginate(10);
 
-        return view('listUpdate', compact('qrcodes', 'sort'));
+        return view('layouts.listUpdate', compact('qrcodes', 'sort'));
+    }
+
+    // LOGIC DASHBOARD
+    public function showChart(Request $request)
+    {
+        $qrcodes = Qrcodes::all(); // atau bisa filter sesuai kebutuhan
+        return view('layouts.chartDiagram', compact('qrcodes'));
     }
 
 

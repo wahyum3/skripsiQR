@@ -18,9 +18,10 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
+        'id_pegawai',
+        'nama',
         'password',
+        'role',
     ];
 
     /**
@@ -46,5 +47,8 @@ class User extends Authenticatable
         ];
     }
 
-    
+    public function getAuthIdentifierName()
+    {
+        return 'id';
+    }
 }

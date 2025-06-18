@@ -1,44 +1,76 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Login</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="{{ asset('LoginTemplate/css/style.css') }}">
-  </head>
-  <body>
-	<section class="ftco-section">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-md-6 col-lg-5">
-					<div class="login-wrap p-4 p-md-5">
-		      	<div class="icon d-flex align-items-center justify-content-center">
-		      		<span class="fa fa-user-o"></span>
-		      	</div>
-		      	<h3 class="text-center mb-4">Have an account?</h3>
-				<form method="POST" action="{{ route('login') }}">
-					@csrf
-					<div class="form-group">
-						<input type="email" name="email" class="form-control rounded-left" placeholder="Email" required autofocus>
-					</div>
-					<div class="form-group d-flex">
-						<input type="password" name="password" class="form-control rounded-left" placeholder="Password" required>
-					</div>
-					<div class="form-group">
-						<button type="submit" class="btn btn-primary rounded submit p-3 px-5">Login</button>
-					</div>
-                    <div id="emailHelp" class="form-text text-center mb-5 text-dark">Not
-                        Registered? <a href="#" class="text-dark fw-bold"> Create an
-                        Account</a>
-                    </div>
-				</form>
-	        </div>
-				</div>
-			</div>
-		</div>
-	</section>
-  </body>
-</html>
 
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
+  <title>Login</title>
+  <link rel="shortcut icon" type="image/png" href="./asset/images/logos/TTLC_mini.jpeg" />
+  <link rel="stylesheet" href="./asset/css/styles.min.css" />
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <div
+      class="position-relative overflow-hidden text-bg-light min-vh-100 d-flex align-items-center justify-content-center">
+      <div class="d-flex align-items-center justify-content-center w-100">
+        <div class="row justify-content-center w-100">
+          <div class="col-md-8 col-lg-6 col-xxl-3">
+            <div class="card mb-0">
+              <div class="card-body">
+                <a href="./index.html" class="text-nowrap logo-img text-center d-block py-3 w-100">
+                  <img src="./asset/images/logos/TTLC_mini.jpeg" alt="">
+                </a>
+                <p class="text-center">Warehouse V to V Export</p>
+                <form method="POST" action="{{ route('login.custom') }}">
+                  @csrf
+                  @if ($errors->any())
+                  <div class="alert alert-danger">
+                    <ul class="mb-0">
+                      @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                      @endforeach
+                    </ul>
+                  </div>
+                  @endif
+                  <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">NIK</label>
+                    <input type="text" name="id_pegawai" class="form-control" required>
+                  </div>
+                  <div class="mb-4">
+                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="form-check">
+                      <input class="form-check-input primary" type="checkbox" value="" id="flexCheckChecked" checked>
+                      <label class="form-check-label text-dark" for="flexCheckChecked">
+                        Remeber this Device
+                      </label>
+                    </div>
+                    <p class="text-primary fw-bold">DONT FORGET YOUR PASSWORD!!!</p>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Sign In</button>
+                  <!-- <div class="d-flex align-items-center justify-content-center">
+                    <p class="fs-4 mb-0 fw-bold">New Account in here</p>
+                    <a class="text-primary fw-bold ms-2" href="./authentication-register.html">Create an account</a>
+                  </div> -->
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>
