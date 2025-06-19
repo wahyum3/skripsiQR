@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\qrcodes;
 use App\Models\Ros;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-
+use Endroid\QrCode\QrCode as EndroidQrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class AdminDashboardController extends Controller
 {
@@ -50,12 +51,17 @@ class AdminDashboardController extends Controller
         $data2 = $request->get('quantity', '20');
         $combinedData = $data1 . ' qty' . $data2;
 
-        // Generate QR code image in PNG
-        $image = QrCode::format('png')->size(300)->generate($combinedData);
+        // Generate PNG menggunakan Endroid
+        $qrCode = new EndroidQrCode($combinedData);
+        $qrCode->setSize(300);
+        $qrCode->setMargin(10);
+
+        $writer = new PngWriter();
+        $result = $writer->write($qrCode);
 
         $filename = 'qr_' . $data1 . '_' . $data2 . '.png';
 
-        return response($image)
+        return response($result->getString())
             ->header('Content-Type', 'image/png')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }

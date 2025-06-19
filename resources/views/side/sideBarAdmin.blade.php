@@ -79,7 +79,12 @@
                                         <i class="ti ti-user fs-6"></i>
                                         <p class="mb-0 fs-3">My Profile</p>
                                     </a>
-                                    <a href="./authentication-login.html" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                                    <form method="POST" action="{{ route('logout') }}" class="mx-3 mt-2 d-block">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-primary w-100">
+                                            Logout
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </li>
