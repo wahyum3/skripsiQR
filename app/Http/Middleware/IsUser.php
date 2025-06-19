@@ -6,15 +6,14 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class IsAdmin
+class IsUser
 {
-    public function handle(Request $request, Closure $next)
+    public function handle($request, Closure $next)
     {
-       if (Auth::check() && Auth::user()->role === 'admin') {
+        if (Auth::check() && Auth::user()->role === 'user') {
             return $next($request);
         }
 
         return redirect('/login')->withErrors(['unauthorized' => 'Unauthorized access.']);
     }
 }
-

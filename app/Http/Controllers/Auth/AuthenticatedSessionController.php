@@ -42,8 +42,11 @@ class AuthenticatedSessionController extends Controller
 
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
-            } else {
+            } elseif ($user->role === 'user') {
                 return redirect()->route('layouts.chartDiagram');
+            } else {
+                Auth::logout();
+                return redirect('/login')->withErrors(['role' => 'Role tidak dikenali.']);
             }
         }
 
@@ -63,6 +66,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 }

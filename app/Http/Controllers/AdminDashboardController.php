@@ -11,11 +11,21 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AdminDashboardController extends Controller
 {
-    // public function indexDashboard(Request $request)
-    // {
-    //     $qrcodes = Qrcodes::all(); // atau bisa filter sesuai kebutuhan
-    //     return view('admin.dashboard', compact('qrcodes'));
-    // }
+    public function indexDashboard(Request $request)
+    {
+        $qrcodes = Qrcodes::all(); // atau bisa filter sesuai kebutuhan
+        return view('admin.dashboard', compact('qrcodes'));
+    }
+
+    public function indexUpdateM(Request $request)
+    {
+        $sort = $request->get('sort', 'asc');
+
+        $qrcodes = Qrcodes::orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc')
+            ->paginate(10);
+
+        return view('admin.updateMaterial', compact('qrcodes', 'sort'));
+    }
 
     public function indexQr(Request $request)
     {
@@ -27,7 +37,7 @@ class AdminDashboardController extends Controller
         // Generate QR code as base64
         $qrCode = QrCode::size(200)->generate($combinedData);
 
-        return view('admin.qr1', [
+        return view('admin.qr', [
             'data1' => $data1,
             'data2' => $data2,
             'qrCode' => $qrCode

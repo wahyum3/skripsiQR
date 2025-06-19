@@ -26,7 +26,7 @@
                   <img src="./asset/images/logos/TTLC_mini.jpeg" alt="">
                 </a>
                 <p class="text-center">Warehouse V to V Export</p>
-                <form method="POST" action="{{ route('login.custom') }}">
+                <form method="POST" action="{{ route('login') }}">
                   @csrf
                   @if ($errors->any())
                   <div class="alert alert-danger">
@@ -55,10 +55,9 @@
                     <p class="text-primary fw-bold">DONT FORGET YOUR PASSWORD!!!</p>
                   </div>
                   <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Sign In</button>
-                  <!-- <div class="d-flex align-items-center justify-content-center">
-                    <p class="fs-4 mb-0 fw-bold">New Account in here</p>
-                    <a class="text-primary fw-bold ms-2" href="./authentication-register.html">Create an account</a>
-                  </div> -->
+                  <div class="d-flex align-items-center justify-content-center">
+                    <p class="fs-4 mb-0 fw-bold">&copy; 2025 System Inbound. By : Wahyu M.</p>
+                  </div>
                 </form>
               </div>
             </div>
@@ -69,6 +68,7 @@
   </div>
   <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ asset('/asset/js/app.min.js') }}"></script>
   <!-- solar icons -->
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
 </body>

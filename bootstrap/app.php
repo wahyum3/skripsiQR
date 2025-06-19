@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Auth\Middleware\Authenticate; 
 use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsUser;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,7 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Menambahkan alias middleware
         $middleware->alias([
             'auth' => Authenticate::class, 
-            'admin' => IsAdmin::class     
+            'admin' => IsAdmin::class,
+            'user' => IsUser::class
+            
         ]);
     })
     

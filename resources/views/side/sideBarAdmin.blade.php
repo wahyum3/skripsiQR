@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Warehouse V to V Export</title>
-    <link rel="shortcut icon" type="image/png" href="{{ asset('asset/images/logos/TTLC.jpeg') }}" />
+    <link rel="shortcut icon" type="image/png" href="{{ asset('asset/images/logos/TTLC.jpg') }}" />
     <link rel="stylesheet" href="{{ asset('asset/css/styles.min.css') }}">
 
 </head>
@@ -36,19 +36,19 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="./update-list" aria-expanded="false">
+                        <a class="sidebar-link" href="#" aria-expanded="false">
                             <i class="ti ti-atom"></i>
                             <span class="hide-menu">List User</span>
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="./update-list" aria-expanded="false">
+                        <a class="sidebar-link" href="{{ route('admin.qr.show') }}" aria-expanded="false">
                             <i class="ti ti-atom"></i>
                             <span class="hide-menu">Generate QR</span>
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="./update-list" aria-expanded="false">
+                        <a class="sidebar-link" href="{{ route('admin.updateMaterial') }}" aria-expanded="false">
                             <i class="ti ti-atom"></i>
                             <span class="hide-menu">Data Material Update</span>
                         </a>

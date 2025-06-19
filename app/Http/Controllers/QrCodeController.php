@@ -6,20 +6,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\qrcodes;
 use App\Models\Ros;
+use App\Models\User;
 
 class QrCodeController extends Controller{
 
     // MENGATUR PEMBUATAN QR CODE
-    public function show(Request $request)
-    {
-        $data1 = $request->get('jenis_material', 'A119FF');
-        $data2 = $request->get('quantity', '20');
+    // public function show(Request $request)
+    // {
+    //     $data1 = $request->get('jenis_material', 'A119FF');
+    //     $data2 = $request->get('quantity', '20');
 
-        $combinedData = $data1 . ' qty' . $data2;
+    //     $combinedData = $data1 . ' qty' . $data2;
 
-        return view('layouts.qr1', ['data' => $combinedData]);
+    //     return view('layouts.qr1', ['data' => $combinedData]);
 
-    }
+    // }
 
     // MENGATUR INPUT DATA SCAN IN  //
     public function store(Request $request)
