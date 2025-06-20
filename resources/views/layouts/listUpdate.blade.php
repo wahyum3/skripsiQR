@@ -32,6 +32,7 @@
           <a href="{{ route('outboundList') }}" class="btn btn-secondary ml-2">Reset</a>
         </form>
       </div>
+      <a href="{{ route('stock.update.export') }}" class="btn btn-success">📥 Download Excel</a>
       <table class="table table-bordered">
         <thead class="thead-dark">
           <tr>
@@ -40,6 +41,7 @@
             <th>Quantity In</th>
             <th>Quantity Out</th>
             <th>Quantity Tersisa</th>
+            <th>Tanggal Update</th>
           </tr>
         </thead>
         <tbody>
@@ -50,6 +52,7 @@
             <td data-label="Quantity In">{{ $item->quantity_in }}</td>
             <td data-label="Quantity Out">{{ $item->quantity_out }}</td>
             <td data-label="Quantity Tersisa">{{ $item->quantity_in - $item->quantity_out }}</td>
+            <td>{{ $item->updated_at ? $item->updated_at->format('d-m-Y H:i:s') : '-' }}</td>
           </tr>
           @empty
           <tr>

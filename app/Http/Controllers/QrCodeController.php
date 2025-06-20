@@ -7,58 +7,12 @@ use Illuminate\Support\Facades\DB;
 use App\Models\qrcodes;
 use App\Models\Ros;
 use App\Models\User;
+use App\Exports\IndexExport;
+use Maatwebsite\Excel\Facades\Excel;
 
-class QrCodeController extends Controller{
+class QrCodeController extends Controller
+{
 
-    // MENGATUR PEMBUATAN QR CODE
-    // public function show(Request $request)
-    // {
-    //     $data1 = $request->get('jenis_material', 'A119FF');
-    //     $data2 = $request->get('quantity', '20');
-
-    //     $combinedData = $data1 . ' qty' . $data2;
-
-    //     return view('layouts.qr1', ['data' => $combinedData]);
-
-    // }
-
-    // MENGATUR INPUT DATA SCAN IN  //
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'kode_qr' => 'required|string',
-            'jenis_material' => 'required|string',
-            'quantity' => 'required|integer'
-        ]);
-
-        // Cek apakah kode_qr sudah ada
-        $existing = qrcodes::where('kode_qr', $validated['kode_qr'])->first();
-
-        if ($existing) {
-            // Jika ada, tambahkan quantity dan update jenis_material jika perlu
-            $existing->quantity_in += $validated['quantity'];
-            $existing->jenis_material = $validated['jenis_material']; // optional: bisa dikunci
-            $existing->save();
-
-            return response()->json([
-                'message' => 'Quantity updated',
-                'data' => $existing
-            ]);
-        } else {
-            // Jika tidak ada, buat entri baru
-            $qrcode = qrcodes::create([
-                'kode_qr' => $validated['kode_qr'],
-                'jenis_material' => $validated['jenis_material'],
-                'quantity_in' => $validated['quantity']
-            ]);
-
-
-        return response()->json([
-            'message' => 'Barcode saved',
-            'data' => $qrcode
-        ]);
-        }
-    }
 
     // MENGATUR HALAMAN INBOUND LIST
     public function index(Request $request)
@@ -70,13 +24,31 @@ class QrCodeController extends Controller{
         $rosData = Ros::with(['materialData' => function ($query) use ($sort) {
             $query->orderBy('jenis_material', $sort);
         }])
-        ->when($filterNoRo, function ($query) use ($filterNoRo) {
-            $query->where('nomor_ro', $filterNoRo);
-        })
-        ->paginate(10) // jumlah per halaman
-        ->appends($request->query()); // menjaga query string seperti ?sort=asc
+            ->when($filterNoRo, function ($query) use ($filterNoRo) {
+                $query->where('nomor_ro', $filterNoRo);
+            })
+            ->paginate(10) // jumlah per halaman
+            ->appends($request->query()); // menjaga query string seperti ?sort=asc
 
         return view('layouts.inboundList', compact('rosData', 'filterNoRo', 'sort'));
+    }
+
+    // MENGATUR DOWNLOAD DATA EXCEL INBOUND
+    public function exportInbound()
+    {
+        $data = Ros::with('materialData')->get()->map(function ($ros) {
+            return [
+                'No RO' => $ros->nomor_ro,
+                'Kode QR' => $ros->materialData->kode_qr ?? '-',
+                'Jenis Material' => $ros->materialData->jenis_material ?? $ros->id_material,
+                'Quantity' => $ros->quantity,
+                'Tanggal Masuk' => optional($ros->updated_at)->format('d-m-Y H:i:s') ?? '-',
+            ];
+        });
+
+        $headings = ['No RO', 'Kode QR', 'Jenis Material', 'Quantity', 'Tanggal Masuk'];
+
+        return Excel::download(new IndexExport($data, $headings), 'inbound_data.xlsx');
     }
 
     // MENGATUR TAMPILAN HALAMAN SORTIR DATA
@@ -85,8 +57,8 @@ class QrCodeController extends Controller{
         $sort = $request->get('sort', 'asc'); // default ke 'asc'
 
         $qrcodes = Qrcodes::with('ros')
-        ->orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc')
-        ->get();
+            ->orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc')
+            ->get();
 
         return view('layouts.sortirData', compact('qrcodes', 'sort'));
     }
@@ -118,7 +90,7 @@ class QrCodeController extends Controller{
                         $existing = Ros::where('id_material', $qrcode->jenis_material)
                             ->where('nomor_ro', $no_ro)
                             ->first();
-                        
+
                         if ($existing) {
                             // Update quantity: tambah
                             $existing->quantity += $qty;
@@ -183,14 +155,33 @@ class QrCodeController extends Controller{
         return view('layouts.outboundList', compact('qrcodes'));
     }
 
+    // MENGATUR HALAMAN DATA UPDATE MATERIAL
     public function indexUpdate(Request $request)
     {
         $sort = $request->get('sort', 'asc');
 
         $qrcodes = Qrcodes::orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc')
-                ->paginate(10);
+            ->paginate(10);
 
         return view('layouts.listUpdate', compact('qrcodes', 'sort'));
+    }
+
+    // MENGATUR FUNGSI DOWNLOAD EXCEL DATA MATERIAL UPDATE
+    public function exportUpdate()
+    {
+        $data = qrcodes::all()->map(function ($item) {
+            return [
+                'Jenis Material' => $item->jenis_material,
+                'Quantity In' => $item->quantity_in,
+                'Quantity Out' => $item->quantity_out,
+                'Quantity Tersisa' => $item->quantity_in - $item->quantity_out,
+                'Tanggal Update' => optional($item->updated_at)->format('d-m-Y H:i:s') ?? '-',
+            ];
+        });
+
+        $headings = ['Jenis Material', 'Quantity In', 'Quantity Out', 'Quantity Tersisa', 'Tanggal Update'];
+
+        return Excel::download(new IndexExport($data, $headings), 'stock_update.xlsx');
     }
 
     // LOGIC DASHBOARD
@@ -199,6 +190,4 @@ class QrCodeController extends Controller{
         $qrcodes = Qrcodes::all(); // atau bisa filter sesuai kebutuhan
         return view('layouts.chartDiagram', compact('qrcodes'));
     }
-
-
 }

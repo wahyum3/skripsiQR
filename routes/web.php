@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Exports\IndexExport;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -14,6 +15,8 @@ use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUser;
 use App\Models\qrcodes;
 use App\Models\User;
+use App\Exports\InboundExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 ///////////// AUTH LOGIN ///////////
@@ -29,10 +32,6 @@ Route::middleware('web')->group(function () {
 
 /////////////// ROUTE USER ////////////
 Route::middleware(['web', 'auth', 'user'])->group(function () {
-    // HALAMAN UTAMA QR
-    // Route::get('/generate-qr', [QrCodeController::class, 'show'])->name('layouts.qr1');
-    // Route::post('/scan-in', [QrCodeController::class, 'store'])->name('scan-in');
-
 
     // INPUT DATA SCAN IN
     Route::get('/scan-in', function () {
@@ -43,6 +42,8 @@ Route::middleware(['web', 'auth', 'user'])->group(function () {
     // HALAMAN INBOUND LIST
     Route::get('/inbound', [QrCodeController::class, 'index'])->name('inboundList');
     Route::post('/inbound', [QrCodeController::class, 'index'])->name('inboundList');
+    Route::get('/inbound/export', [QrCodeController::class, 'exportInbound'])->name('inbound.export');
+
 
     // HALAMAN SORTIR DATA
     Route::match(['get', 'post'], '/sortir-data', [QrCodeController::class, 'indexSortir'])->name('sortirData');
@@ -63,16 +64,16 @@ Route::middleware(['web', 'auth', 'user'])->group(function () {
 
     // HALAMAN UPDATE LIST
     Route::get('/update-list', [QrCodeController::class, 'indexUpdate'])->name('updateList');
-
-
     Route::get('/dashboard', [QrCodeController::class, 'showChart'])->name('layouts.chartDiagram');
+    Route::get('/stock-update/export', [QrCodeController::class, 'exportUpdate'])->name('stock.update.export');
 });
 
-Route::middleware(['web','auth','admin'])->group(function () {
+Route::middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'indexDashboard'])->name('admin.dashboard');
     Route::get('/admin/qr/show', [AdminDashboardController::class, 'indexQr'])->name('admin.qr.show');
     Route::get('/admin/qr/download', [AdminDashboardController::class, 'downloadQr'])->name('admin.qr.download');
     Route::get('/admin/Update-Material', [AdminDashboardController::class, 'indexUpdateM'])->name('admin.updateMaterial');
+    Route::get('/stock-update/export', [AdminDashboardController::class, 'exportUpdate'])->name('stock.update.export');
 });
 
 // LOGOUT
@@ -82,5 +83,3 @@ Route::middleware(['web', 'auth'])->post('/logout', function (Request $request) 
     $request->session()->regenerateToken();
     return redirect('/login');
 })->name('logout');
-
-

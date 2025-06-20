@@ -9,6 +9,8 @@ use App\Models\Ros;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Endroid\QrCode\QrCode as EndroidQrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use App\Exports\IndexExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminDashboardController extends Controller
 {
@@ -26,6 +28,23 @@ class AdminDashboardController extends Controller
             ->paginate(10);
 
         return view('admin.updateMaterial', compact('qrcodes', 'sort'));
+    }
+
+    public function exportUpdate()
+    {
+        $data = qrcodes::all()->map(function ($item) {
+            return [
+                'Jenis Material' => $item->jenis_material,
+                'Quantity In' => $item->quantity_in,
+                'Quantity Out' => $item->quantity_out,
+                'Quantity Tersisa' => $item->quantity_in - $item->quantity_out,
+                'Tanggal Update' => optional($item->updated_at)->format('d-m-Y H:i:s') ?? '-',
+            ];
+        });
+
+        $headings = ['Jenis Material', 'Quantity In', 'Quantity Out', 'Quantity Tersisa', 'Tanggal Update'];
+
+        return Excel::download(new IndexExport($data, $headings), 'stock_update.xlsx');
     }
 
     public function indexQr(Request $request)

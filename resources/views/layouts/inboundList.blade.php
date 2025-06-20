@@ -37,6 +37,7 @@
         <a href="{{ route('inboundList') }}" class="btn btn-secondary ml-2">Reset</a>
       </form>
     </div>
+    <a href="{{ route('inbound.export') }}" class="btn btn-success">📥 Download Excel</a>
     <table class="table table-bordered">
       <thead class="thead-dark">
         <tr>
@@ -44,6 +45,7 @@
           <th>Kode QR</th>
           <th>Jenis Material</th>
           <th>Quantity</th>
+          <th>Tanggal Masuk</th>
         </tr>
       </thead>
       <tbody>
@@ -53,6 +55,7 @@
           <td>{{ $ros->materialData->kode_qr ?? '-' }}</td>
           <td>{{ $ros->materialData->jenis_material ?? $ros->id_material }}</td>
           <td>{{ $ros->quantity }}</td>
+          <td>{{ $ros->updated_at ? $ros->updated_at->format('d-m-Y H:i:s') : '-' }}</td>
         </tr>
         @empty
         <tr>
