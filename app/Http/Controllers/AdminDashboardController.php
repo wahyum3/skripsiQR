@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\qrcodes;
 use App\Models\Ros;
+use App\Models\User;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Endroid\QrCode\QrCode as EndroidQrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use App\Exports\IndexExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Hash;
 
 class AdminDashboardController extends Controller
 {
@@ -83,5 +85,49 @@ class AdminDashboardController extends Controller
         return response($result->getString())
             ->header('Content-Type', 'image/png')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    public function indexUser()
+    {
+        $users = User::latest()->paginate(10);
+        return view('admin.userControl', compact('users'));
+    }
+
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'id_pegawai' => 'required|string|unique:users,id_pegawai',
+            'nama'       => 'required|string|max:255',
+            'role'       => 'required|in:user,admin',
+        ]);
+
+        User::create([
+            'id_pegawai' => $request->id_pegawai,
+            'nama'       => $request->nama,
+            'role'       => $request->role,
+            'password'   => bcrypt('password') // default password
+        ]);
+
+        return redirect()->route('admin.userControl')->with('success', 'User berhasil ditambahkan.');
+    }
+
+    public function deleteUser($id)
+    {
+        User::findOrFail($id)->delete();
+        return redirect()->route('admin.userControl')->with('success', 'User berhasil dihapus.');
+    }
+
+
+     public function updatePw(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->back()->with('success', 'Password berhasil diubah.');
     }
 }

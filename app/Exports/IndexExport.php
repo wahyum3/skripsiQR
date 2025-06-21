@@ -5,6 +5,7 @@ namespace App\Exports;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use App\Http\Controllers\AdminDashboardController;
 
 class IndexExport implements FromCollection, WithHeadings
 {

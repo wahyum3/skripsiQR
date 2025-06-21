@@ -74,6 +74,11 @@ Route::middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/admin/qr/download', [AdminDashboardController::class, 'downloadQr'])->name('admin.qr.download');
     Route::get('/admin/Update-Material', [AdminDashboardController::class, 'indexUpdateM'])->name('admin.updateMaterial');
     Route::get('/stock-update/export', [AdminDashboardController::class, 'exportUpdate'])->name('stock.update.export');
+
+    Route::get('/admin/user', [AdminDashboardController::class, 'indexUser'])->name('admin.userControl');
+    Route::post('/admin/user/store', [AdminDashboardController::class, 'storeUser'])->name('admin.userControl.store');
+    Route::put('/admin/user/update-password/{id}', [AdminDashboardController::class, 'updatePw'])->name('admin.userControl.updatePassword');
+    Route::delete('/admin/user/{id}', [AdminDashboardController::class, 'deleteUser'])->name('admin.userControl.delete');
 });
 
 // LOGOUT

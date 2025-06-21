@@ -36,7 +36,7 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="#" aria-expanded="false">
+                        <a class="sidebar-link" href="{{ route('admin.userControl') }}" aria-expanded="false">
                             <i class="ti ti-atom"></i>
                             <span class="hide-menu">List User</span>
                         </a>
