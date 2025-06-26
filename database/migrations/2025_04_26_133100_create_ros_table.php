@@ -6,28 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('ros', function (Blueprint $table) {
             $table->id();
-            $table->string('id_material');
+            $table->unsignedBigInteger('id_qrcode'); // FK ke qrcodes.id
             $table->string('nomor_ro');
             $table->integer('quantity');
             $table->timestamps();
 
-            // Relasi ke tabel material
-            // $table->foreign('id_material')->references('id')->on('materials')->onDelete('cascade');
+            $table->foreign('id_qrcode')->references('id')->on('qrcodes')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('ros');
     }
 };
+

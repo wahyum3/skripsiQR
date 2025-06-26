@@ -7,7 +7,7 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <link rel="shortcut icon" type="image/png" href="./asset/images/logos/TTLC.jpg" />
-  <link rel="stylesheet" href="./asset/css/styles.min.css" />
+  <link rel="stylesheet" href="{{ asset('asset/css/styles.min.css') }}" />
 </head>
 <body>
     @include('side.sideBar')

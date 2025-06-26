@@ -52,8 +52,8 @@
         @forelse ($rosData as $ros)
         <tr>
           <td>{{ $ros->nomor_ro }}</td>
-          <td>{{ $ros->materialData->kode_qr ?? '-' }}</td>
-          <td>{{ $ros->materialData->jenis_material ?? $ros->id_material }}</td>
+          <td>{{ $ros->qrcode->kode_qr ?? '-' }}</td>
+          <td>{{ $ros->qrcode->jenis_material ?? $ros->id_material }}</td>
           <td>{{ $ros->quantity }}</td>
           <td>{{ $ros->updated_at ? $ros->updated_at->format('d-m-Y H:i:s') : '-' }}</td>
         </tr>

@@ -13,10 +13,25 @@
 
 <body>
 
- @include('side.sideBar')
+  @include('side.sideBar')
 
   <div class="content-room">
     <h2 class="mb-4">Daftar Data INBOUND Material</h2>
+    @if (session('success'))
+    <div class="alert alert-success">
+      {{ session('success') }}
+    </div>
+    @endif
+
+    @if ($errors->any())
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+    @endif
     <div class="mb-4">
       <form action="{{ route('sortirData') }}" method="GET" class="form-inline">
         <div class="form-group mr-2">

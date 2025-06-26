@@ -1,32 +1,48 @@
-function onScanSuccess(decodedText, decodedResult) {
-    document.getElementById('scan-result').innerText = `QR Code terdeteksi: ${decodedText}`;
-    // Kamu bisa redirect atau kirim data ke server di sini
-    // window.location.href = `/proses/${decodedText}`;
-    // Contoh format: "S50FF qty20"
-    // Split kode QR seperti "S50FF qty20"
-    const parts = decodedText.split(' qty');
-    const kode_qr = parts[0] || '';
-    const quantity_out = parseInt(parts[1]) || 0;
+let lastScannedCode = null;
 
-    // Kirim hanya kode_qr dan quantity_out
+function onScanSuccess(decodedText, decodedResult) {
+    if (decodedText === lastScannedCode) {
+        // Abaikan QR yang sama
+        return;
+    }
+
+    lastScannedCode = decodedText;
+    document.getElementById('scan-result').innerText = `QR Code terdeteksi: ${decodedText}`;
+
+    // Pecah QR: contoh "A119FF qty20" → ["A119FF", "20"]
+    const parts = decodedText.split(' qty');
+    const kode_qr = parts[0]?.trim() || '';
+    const quantity = parseInt(parts[1]) || 0;
+
+    if (!kode_qr || quantity <= 0) {
+        alert('Format QR tidak valid!');
+        return;
+    }
+
     fetch('/scan-out', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
         body: JSON.stringify({
             kode_qr: kode_qr,
-            quantity: quantity_out
+            quantity: quantity
         })
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error('Gagal menyimpan data QR.');
+            return response.json();
+        })
         .then(data => {
             console.log(data);
-            alert("QR berhasil disimpan (Scan Out)!");
+            alert(data.message || "Scan Out berhasil!");
         })
         .catch(error => {
             console.error('Error:', error);
+            alert('Terjadi kesalahan saat menyimpan Scan Out.');
         });
 }
 

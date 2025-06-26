@@ -3,20 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ros extends Model
 {
+    use HasFactory;
+
     protected $table = 'ros';
 
     protected $fillable = [
-        'id_material',
+        'id_qrcode',   // relasi ke qrcodes.id
         'nomor_ro',
         'quantity'
     ];
 
-    public function materialData()
+    /**
+     * Relasi ke QRCode (material)
+     */
+    public function qrcode()
     {
-    return $this->belongsTo(qrcodes::class, 'id_material', 'jenis_material');
+        return $this->belongsTo(Qrcode::class, 'id_qrcode');
     }
 }
-

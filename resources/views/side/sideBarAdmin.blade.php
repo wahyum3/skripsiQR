@@ -42,7 +42,7 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('admin.qr.show') }}" aria-expanded="false">
+                        <a class="sidebar-link" href="{{ route('admin.qr.form') }}" aria-expanded="false">
                             <i class="ti ti-atom"></i>
                             <span class="hide-menu">Generate QR</span>
                         </a>

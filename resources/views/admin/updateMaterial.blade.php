@@ -17,21 +17,6 @@
   <div class="content-room">
     <!-- <div class="container mt-5"> -->
     <h2 class="mb-4">Daftar Material Update</h2>
-    <div class="mb-4">
-      <form action="{{ route('outboundList') }}" method="GET" class="form-inline">
-        <div class="form-group mr-2">
-          <label for="sort" class="mr-2">Urutkan</label>
-          <select name="sort" id="sort" class="form-control">
-            <option value="">-- Pilih --</option>
-            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A - Z</option>
-            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z - A</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Filter</button>
-        <a href="{{ route('outboundList') }}" class="btn btn-secondary ml-2">Reset</a>
-      </form>
-    </div>
     <a href="{{ route('stock.update.export') }}" class="btn btn-success">📥 Download Excel</a>
     <table class="table table-bordered">
       <thead class="thead-dark">

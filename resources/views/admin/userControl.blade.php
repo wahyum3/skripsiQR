@@ -9,6 +9,8 @@
 
     <link rel="shortcut icon" type="image/png" href="{{ asset('asset/images/logos/TTLC.jpg') }}" />
     <link rel="stylesheet" href="{{ asset('asset/css/styles.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 </head>
 
 <body>
@@ -16,6 +18,22 @@
 
     <div class="content-room">
         <h2 class="mb-4">Daftar Pengguna</h2>
+
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
 
         {{-- Form Tambah User --}}
         <div class="mb-4">
@@ -91,13 +109,23 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-2 position-relative">
                                 <label>Password Baru</label>
-                                <input type="password" name="password" class="form-control" required minlength="6">
+                                <div class="input-group">
+                                    <input type="password" name="password" class="form-control" id="passwordInput{{ $user->id }}" required minlength="6">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-eye-slash toggle-password" data-target="passwordInput{{ $user->id }}"></i>
+                                    </span>
+                                </div>
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-2 position-relative">
                                 <label>Konfirmasi Password</label>
-                                <input type="password" name="password_confirmation" class="form-control" required minlength="6">
+                                <div class="input-group">
+                                    <input type="password" name="password_confirmation" class="form-control" id="confirmPasswordInput{{ $user->id }}" required minlength="6">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-eye-slash toggle-password" data-target="confirmPasswordInput{{ $user->id }}"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -116,6 +144,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('asset/js/togleEye.js') }}"></script>
 </body>
 
 </html>
