@@ -7,6 +7,7 @@
   <title>Warehouse V to V Export</title>
   <link rel="shortcut icon" type="image/png" href="{{ asset('asset/images/logos/TTLC.jpg') }}" />
   <link rel="stylesheet" href="{{ asset('asset/css/styles.min.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body>
@@ -30,7 +31,7 @@
           </li>
           <li class="sidebar-item">
             <a class="sidebar-link" href="./dashboard" aria-expanded="false">
-              <i class="ti ti-atom"></i>
+              <i class="bi bi-bar-chart-fill"></i>
               <span class="hide-menu">Dashboard</span>
             </a>
           </li>
@@ -41,7 +42,7 @@
               aria-expanded="false">
               <div class="d-flex align-items-center gap-3">
                 <span class="d-flex">
-                  <i class="ti ti-layout-grid"></i>
+                  <i class="bi bi-box-arrow-in-left"></i>
                 </span>
                 <span class="hide-menu">Inbound</span>
               </div>
@@ -89,7 +90,7 @@
               aria-expanded="false">
               <div class="d-flex align-items-center gap-3">
                 <span class="d-flex">
-                  <i class="ti ti-layout-grid"></i>
+                  <i class="bi bi-box-arrow-right"></i>
                 </span>
                 <span class="hide-menu">Outbound</span>
               </div>
@@ -121,7 +122,7 @@
           </li>
           <li class="sidebar-item">
             <a class="sidebar-link" href="./update-list" aria-expanded="false">
-              <i class="ti ti-atom"></i>
+              <i class="bi bi-clipboard2-data-fill"></i>
               <span class="hide-menu">Data material update</span>
             </a>
           </li>
@@ -147,15 +148,19 @@
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                 <div class="message-body">
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <div class="px-3 py-2 text-center">
+                    <strong>{{ auth()->user()->nama }}</strong><br>
+                    <small class="text-muted">{{ ucfirst(auth()->user()->role) }}</small>
+                  </div>
+
+                  <a href="" class="d-flex align-items-center gap-2 dropdown-item">
                     <i class="ti ti-user fs-6"></i>
                     <p class="mb-0 fs-3">My Profile</p>
                   </a>
+
                   <form method="POST" action="{{ route('logout') }}" class="mx-3 mt-2 d-block">
                     @csrf
-                    <button type="submit" class="btn btn-outline-primary w-100">
-                      Logout
-                    </button>
+                    <button type="submit" class="btn btn-outline-primary w-100">Logout</button>
                   </form>
                 </div>
               </div>

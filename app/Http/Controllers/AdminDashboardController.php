@@ -18,18 +18,30 @@ class AdminDashboardController extends Controller
 {
     public function indexDashboard(Request $request)
     {
-        $qrcodes = Qrcode::all();
+        $qrcodes = Qrcode::whereNotNull('quantity_in')
+            ->whereNotNull('quantity_out'); // hanya data yang punya in & out
         return view('admin.dashboard', compact('qrcodes'));
     }
 
     public function indexUpdateM(Request $request)
     {
-        $sort = $request->get('sort', 'asc');
 
-        $qrcodes = Qrcode::orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc')
-            ->paginate(10);
+        $stockStatus = $request->get('stock_status');
 
-        return view('admin.updateMaterial', compact('qrcodes', 'sort'));
+        $qrcodes = Qrcode::whereNotNull('quantity_in')
+            ->whereNotNull('quantity_out'); // hanya data yang punya in & out
+
+        // Filter berdasarkan stock status
+        if ($stockStatus === 'empty') {
+            $qrcodes = $qrcodes->whereRaw('quantity_in - quantity_out <= 0');
+        } elseif ($stockStatus === 'available') {
+            $qrcodes = $qrcodes->whereRaw('quantity_in - quantity_out > 0');
+        }
+
+        // Paginasi
+        $qrcodes = $qrcodes->paginate(10);
+
+        return view('admin.updateMaterial', compact('qrcodes', 'stockStatus'));
     }
 
     public function exportUpdate()
@@ -53,12 +65,15 @@ class AdminDashboardController extends Controller
     private $defaultQuantity = 20;
 
     // Tampilkan form kosong
-    public function formQr()
+    public function formQr(Request $request)
     {
+        $qrcodes = Qrcode::orderBy('updated_at', 'desc')->paginate(10); // pagination aktif
+
         return view('admin.qr', [
+            'qrcodes' => $qrcodes,
             'data1' => old('jenis_material', ''),
             'data2' => old('quantity', ''),
-            'qrCode' => null,
+            'qrCode' => null, // default kosong saat halaman pertama dibuka
         ]);
     }
 
@@ -87,7 +102,10 @@ class AdminDashboardController extends Controller
         // Generate QR code
         $qrCode = QrCodeFacade::size(200)->generate($qrContent);
 
+        $qrcodes = Qrcode::orderBy('updated_at', 'desc')->paginate(10);
+
         return view('admin.qr', [
+            'qrcodes' => $qrcodes,
             'data1' => $jenisMaterial,
             'data2' => $quantity,
             'qrCode' => $qrCode,

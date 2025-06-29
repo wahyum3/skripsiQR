@@ -150,6 +150,14 @@ class QrCodeController extends Controller
             return response()->json(['message' => 'QR Code tidak ditemukan.'], 404);
         }
 
+        // Hitung stok tersisa
+        $tersisa = ($qrcode->quantity_in ?? 0) - ($qrcode->quantity_out ?? 0);
+
+        // Jika stok tidak cukup
+        if ($request->quantity > $tersisa) {
+            return response()->json(['message' => 'Stock material ini habis atau tidak mencukupi.'], 400);
+        }
+
         $qrcode->quantity_out = ($qrcode->quantity_out ?? 0) + $request->quantity;
         $qrcode->save();
 
@@ -175,12 +183,26 @@ class QrCodeController extends Controller
     // HALAMAN UPDATE MATERIAL
     public function indexUpdate(Request $request)
     {
+        // Ambil nilai filter dan sort
         $sort = $request->get('sort', 'asc');
+        $stockStatus = $request->get('stock_status');
 
-        $qrcodes = Qrcode::orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc')
-            ->paginate(10);
+        // Query dasar untuk Qrcode
+        $qrcodes = Qrcode::whereNotNull('quantity_in')
+            ->whereNotNull('quantity_out') // hanya data yang punya in & out
+            ->orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc');
 
-        return view('layouts.listUpdate', compact('qrcodes', 'sort'));
+        // Filter berdasarkan stock status
+        if ($stockStatus === 'empty') {
+            $qrcodes = $qrcodes->whereRaw('quantity_in - quantity_out <= 0');
+        } elseif ($stockStatus === 'available') {
+            $qrcodes = $qrcodes->whereRaw('quantity_in - quantity_out > 0');
+        }
+
+        // Paginasi
+        $qrcodes = $qrcodes->paginate(10);
+
+        return view('layouts.listUpdate', compact('qrcodes', 'sort', 'stockStatus'));
     }
 
     // EXPORT DATA MATERIAL UPDATE
@@ -204,7 +226,8 @@ class QrCodeController extends Controller
     // CHART DASHBOARD
     public function showChart()
     {
-        $qrcodes = Qrcode::all();
+        $qrcodes = Qrcode::whereNotNull('quantity_in')
+        ->whereNotNull('quantity_out');
         return view('layouts.chartDiagram', compact('qrcodes'));
     }
 }

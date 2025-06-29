@@ -62,6 +62,44 @@
       </div>
     </div>
 
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>No</th>
+          <th>QR Code</th>
+          <th>Status QR</th>
+          <th>Tanggal Update QR</th>
+        </tr>
+      </thead>
+      <tbody>
+        @forelse ($qrcodes as $index => $item)
+        <tr>
+          <td data-label="No">{{ ($qrcodes->currentPage() - 1) * $qrcodes->perPage() + $loop->iteration }}</td>
+          <td data-label="QR Code">{{ $item->kode_qr }}</td>
+          <td data-label="Status QR">{{ $item->status }}</td>
+          <td data-label="Tanggal Update QR">{{ $item->updated_at ? $item->updated_at->format('d-m-Y H:i:s') : '-' }}</td>
+        </tr>
+        @empty
+        <tr>
+          <td colspan="6" class="text-center">Tidak ada data.</td>
+        </tr>
+        @endforelse
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-between">
+      @if ($qrcodes->onFirstPage())
+      <span class="btn btn-secondary disabled">← Previous</span>
+      @else
+      <a href="{{ $qrcodes->previousPageUrl() }}" class="btn btn-primary">← Previous</a>
+      @endif
+
+      @if ($qrcodes->hasMorePages())
+      <a href="{{ $qrcodes->nextPageUrl() }}" class="btn btn-primary">Next →</a>
+      @else
+      <span class="btn btn-secondary disabled">Next →</span>
+      @endif
+    </div>
+
   </div>
 
 

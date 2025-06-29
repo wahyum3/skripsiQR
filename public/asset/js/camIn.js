@@ -25,12 +25,14 @@ function onScanSuccess(decodedText, decodedResult) {
     .then(response => {
       if (!response.ok) {
         throw new Error('Gagal menyimpan data QR.');
+        location.reload();
       }
       return response.json();
     })
     .then(data => {
       console.log(data);
       alert(data.message || "QR berhasil disimpan!");
+      location.reload();
     })
     .catch(error => {
       console.error('Error:', error);

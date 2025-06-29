@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('quantity_in')->nullable();
             $table->integer('quantity_out')->nullable();
             $table->string('status')->default('QR Aktif');
-            $table->timestamp('status_at')->nullable(); // Ini bisa menyimpan waktu aktivasi
             $table->timestamps();
         });
     }

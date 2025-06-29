@@ -33,12 +33,23 @@ function onScanSuccess(decodedText, decodedResult) {
         })
     })
         .then(response => {
-            if (!response.ok) throw new Error('Gagal menyimpan data QR.');
+            if (!response.ok) {
+                if (response.status === 400) {
+                    // Menangani error stok habis
+                    return response.json().then(data => {
+                        alert(data.message || "Stock material kosong, tolong scan inbound dahulu");
+                        location.reload();
+                    });
+                }
+                throw new Error('Gagal menyimpan data QR.');
+            }
             return response.json();
         })
+
         .then(data => {
             console.log(data);
             alert(data.message || "Scan Out berhasil!");
+            location.reload();
         })
         .catch(error => {
             console.error('Error:', error);

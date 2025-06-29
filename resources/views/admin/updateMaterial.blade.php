@@ -17,6 +17,20 @@
   <div class="content-room">
     <!-- <div class="container mt-5"> -->
     <h2 class="mb-4">Daftar Material Update</h2>
+    <div class="mb-4">
+      <form action="{{ route('admin.updateMaterial') }}" method="GET" class="form-inline">
+        <div class="form-group mr-2">
+          <label for="stock_status" class="mr-2">Stock Status</label>
+          <select name="stock_status" id="stock_status" class="form-control">
+            <option value="">-- Semua --</option>
+            <option value="empty" {{ request('stock_status') == 'empty' ? 'selected' : '' }}>Tidak ada Stock</option>
+            <option value="available" {{ request('stock_status') == 'available' ? 'selected' : '' }}>Tersedia</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{{ route('admin.updateMaterial') }}" class="btn btn-secondary ml-2">Reset</a>
+      </form>
+    </div>
     <a href="{{ route('stock.update.export') }}" class="btn btn-success">📥 Download Excel</a>
     <table class="table table-bordered">
       <thead class="thead-dark">
@@ -36,9 +50,13 @@
           <td data-label="Jenis Material">{{ $item->jenis_material }}</td>
           <td data-label="Quantity In">{{ $item->quantity_in }}</td>
           <td data-label="Quantity Out">{{ $item->quantity_out }}</td>
-          <td data-label="Quantity Tersisa">{{ $item->quantity_in - $item->quantity_out }}</td>
+          <td data-label="Quantity Tersisa">
+            @php
+            $tersisa = $item->quantity_in - $item->quantity_out;
+            @endphp
+            {{ ($tersisa <= 0 || is_null($tersisa)) ? 'Tidak ada stock' : $tersisa }}
+          </td>
           <td data-label="Tanggal Update">{{ $item->updated_at ? $item->updated_at->format('d-m-Y H:i:s') : '-' }}</td>
-        </tr>
         </tr>
         @empty
         <tr>

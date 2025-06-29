@@ -17,7 +17,6 @@ class Qrcode extends Model
         'quantity_in',
         'quantity_out',
         'status',
-        'status_at'
     ];
 
     // protected $casts = [
