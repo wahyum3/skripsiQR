@@ -7,6 +7,10 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Hash;
 
+
+/**
+ * @property string|null $role
+ */
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;

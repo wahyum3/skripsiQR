@@ -9,6 +9,7 @@
 
   <link rel="shortcut icon" type="image/png" href="./asset/images/logos/TTLC.jpg">
   <link rel="stylesheet" href="./asset/css/styles.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
 </head>
 
 <body>
@@ -17,22 +18,7 @@
 
   <div class="content-room">
     <h2 class="mb-4">Daftar Data OUTBOUND Material</h2>
-    <div class="mb-4">
-      <form action="{{ route('outboundList') }}" method="GET" class="form-inline">
-        <div class="form-group mr-2">
-          <label for="sort" class="mr-2">Urutkan</label>
-          <select name="sort" id="sort" class="form-control">
-            <option value="">-- Pilih --</option>
-            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A - Z</option>
-            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z - A</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Filter</button>
-        <a href="{{ route('outboundList') }}" class="btn btn-secondary ml-2">Reset</a>
-      </form>
-    </div>
-    <table class="table table-bordered">
+    <table class="table table-bordered" id="myTable">
       <thead class="thead-dark">
         <tr>
           <th>No</th>
@@ -42,37 +28,28 @@
         </tr>
       </thead>
       <tbody>
-        @forelse ($qrcodes as $qr)
+        @foreach ($qrcodes as $index => $item)
         <tr>
-          <td>{{ ($qrcodes->currentPage() - 1) * $qrcodes->perPage() + $loop->iteration }}</td>
-          <td>{{ $qr->kode_qr }}</td>
-          <td>{{ $qr->jenis_material }}</td>
-          <td>{{ $qr->quantity_out > 0 ? $qr->quantity_out : 'No Scanned' }}</td>
+          <td>{{ $index+1 }}</td>
+          <td>{{ $item->kode_qr }}</td>
+          <td>{{ $item->jenis_material }}</td>
+          <td>{{ $item->quantity_out > 0 ? $item->quantity_out : 'No Scanned' }}</td>
         </tr>
-        @empty
+        @endforeach
+        @if($qrcodes->isEmpty())
         <tr>
-          <td colspan="3" class="text-center">Tidak ada data QR Code.</td>
+          <td colspan="4" class="text-center">Tidak ada data QR Code.</td>
         </tr>
-        @endforelse
+        @endif
       </tbody>
     </table>
-    <div class="d-flex justify-content-between">
-      @if ($qrcodes->onFirstPage())
-      <span class="btn btn-secondary disabled">← Previous</span>
-      @else
-      <a href="{{ $qrcodes->previousPageUrl() }}" class="btn btn-primary">← Previous</a>
-      @endif
-
-      @if ($qrcodes->hasMorePages())
-      <a href="{{ $qrcodes->nextPageUrl() }}" class="btn btn-primary">Next →</a>
-      @else
-      <span class="btn btn-secondary disabled">Next →</span>
-      @endif
-    </div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <script>
+    let table = new DataTable('#myTable');
+  </script>
 </body>
 
 </html>

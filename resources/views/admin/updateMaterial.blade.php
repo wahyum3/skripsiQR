@@ -9,6 +9,7 @@
 
   <link rel="shortcut icon" type="image/png" href="{{ asset('asset/images/logos/TTLC.jpg') }}" />
   <link rel="stylesheet" href="{{ asset('asset/css/styles.min.css') }}">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
 </head>
 
 <body>
@@ -17,7 +18,7 @@
   <div class="content-room">
     <!-- <div class="container mt-5"> -->
     <h2 class="mb-4">Daftar Material Update</h2>
-    <div class="mb-4">
+    {{-- <div class="mb-4">
       <form action="{{ route('admin.updateMaterial') }}" method="GET" class="form-inline">
         <div class="form-group mr-2">
           <label for="stock_status" class="mr-2">Stock Status</label>
@@ -30,9 +31,9 @@
         <button type="submit" class="btn btn-primary">Filter</button>
         <a href="{{ route('admin.updateMaterial') }}" class="btn btn-secondary ml-2">Reset</a>
       </form>
-    </div>
+    </div> --}}
     <a href="{{ route('stock.update.export') }}" class="btn btn-success">📥 Download Excel</a>
-    <table class="table table-bordered">
+    <table class="table table-bordered" id="myTable">
       <thead class="thead-dark">
         <tr>
           <th>No</th>
@@ -46,10 +47,12 @@
       <tbody>
         @forelse ($qrcodes as $index => $item)
         <tr>
-          <td data-label="No">{{ ($qrcodes->currentPage() - 1) * $qrcodes->perPage() + $loop->iteration }}</td>
+          <td data-label="No">{{ $index+1 }}</td>
           <td data-label="Jenis Material">{{ $item->jenis_material }}</td>
           <td data-label="Quantity In">{{ $item->quantity_in }}</td>
-          <td data-label="Quantity Out">{{ $item->quantity_out }}</td>
+          <td data-label="Quantity Out">
+            {{ is_null($item->quantity_out) ? 'Tidak ada data' : $item->quantity_out }}
+          </td>
           <td data-label="Quantity Tersisa">
             @php
             $tersisa = $item->quantity_in - $item->quantity_out;
@@ -65,7 +68,7 @@
         @endforelse
       </tbody>
     </table>
-    <div class="d-flex justify-content-between">
+    {{-- <div class="d-flex justify-content-between">
       @if ($qrcodes->onFirstPage())
       <span class="btn btn-secondary disabled">← Previous</span>
       @else
@@ -77,12 +80,16 @@
       @else
       <span class="btn btn-secondary disabled">Next →</span>
       @endif
-    </div>
+    </div> --}}
 
     <!-- </div> -->
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <script>
+    let table = new DataTable('#myTable');
+  </script>
 </body>
 
 </html>

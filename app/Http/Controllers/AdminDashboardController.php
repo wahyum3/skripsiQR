@@ -16,37 +16,29 @@ use Endroid\QrCode\Writer\PngWriter;
 
 class AdminDashboardController extends Controller
 {
+    // MENAMPILKAN HALAMAN DASHBOARD
     public function indexDashboard(Request $request)
     {
         $qrcodes = Qrcode::whereNotNull('quantity_in')
-            ->whereNotNull('quantity_out'); // hanya data yang punya in & out
+            ->orWhereNotNull('quantity_out'); // hanya data yang punya in & out
         return view('admin.dashboard', compact('qrcodes'));
     }
 
+    // MENAMPILKAN HALAMAN DATA UPDATE MATERIAL
     public function indexUpdateM(Request $request)
     {
 
-        $stockStatus = $request->get('stock_status');
-
         $qrcodes = Qrcode::whereNotNull('quantity_in')
-            ->whereNotNull('quantity_out'); // hanya data yang punya in & out
+            ->orWhereNotNull('quantity_out')->get();
 
-        // Filter berdasarkan stock status
-        if ($stockStatus === 'empty') {
-            $qrcodes = $qrcodes->whereRaw('quantity_in - quantity_out <= 0');
-        } elseif ($stockStatus === 'available') {
-            $qrcodes = $qrcodes->whereRaw('quantity_in - quantity_out > 0');
-        }
-
-        // Paginasi
-        $qrcodes = $qrcodes->paginate(10);
-
-        return view('admin.updateMaterial', compact('qrcodes', 'stockStatus'));
+        return view('admin.updateMaterial', compact('qrcodes'));
     }
 
+    // AKSI UNTUK DOWNLOAD EXCEL DATA UPDATE MATERIAL
     public function exportUpdate()
     {
-        $data = Qrcode::all()->map(function ($item) {
+        $data = Qrcode::whereNotNull('quantity_in')
+            ->orWhereNotNull('quantity_out')->get()->map(function ($item) {
             return [
                 'Jenis Material'    => $item->jenis_material,
                 'Quantity In'       => $item->quantity_in,
@@ -64,7 +56,7 @@ class AdminDashboardController extends Controller
     private $defaultJenisMaterial = 'A119FF';
     private $defaultQuantity = 20;
 
-    // Tampilkan form kosong
+    // HALAMAN AWAL GENERAT QR
     public function formQr(Request $request)
     {
         $qrcodes = Qrcode::orderBy('updated_at', 'desc')->paginate(10); // pagination aktif
@@ -78,6 +70,7 @@ class AdminDashboardController extends Controller
     }
 
 
+    // HALAMAN SETELAH QR DI GENERATE
     public function indexQr(Request $request)
     {
         $validated = $request->validate([
@@ -112,6 +105,7 @@ class AdminDashboardController extends Controller
         ]);
     }
 
+    // AKSI UNTUK DOWNLOAD GAMBAR QR
     public function downloadQr(Request $request)
     {
         $validated = $request->validate([
@@ -137,12 +131,14 @@ class AdminDashboardController extends Controller
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
+    // HALAMAN LIST USER
     public function indexUser()
     {
         $users = User::latest()->paginate(10);
         return view('admin.userControl', compact('users'));
     }
 
+    // AKSI UNTUK MENAMBAHKAN USER
     public function storeUser(Request $request)
     {
         $request->validate([
@@ -162,6 +158,7 @@ class AdminDashboardController extends Controller
             ->with('success', 'User berhasil ditambahkan. Password default: "password"');
     }
 
+    // AKSI UNTUK MENDELETE USER
     public function deleteUser($id)
     {
         User::findOrFail($id)->delete();

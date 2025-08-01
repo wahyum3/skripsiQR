@@ -14,19 +14,9 @@ class QrCodeController extends Controller
     // TAMPILKAN HALAMAN INBOUND LIST
     public function index(Request $request)
     {
-        $filterNoRo = $request->input('no_ro');
-        $sort = strtolower($request->input('sort', 'asc'));
+        $rosData = Ros::with('qrcode')->get();
 
-        $rosData = Ros::with(['qrcode' => function ($query) use ($sort) {
-            $query->orderBy('jenis_material', $sort);
-        }])
-            ->when($filterNoRo, function ($query) use ($filterNoRo) {
-                $query->where('nomor_ro', $filterNoRo);
-            })
-            ->paginate(10)
-            ->appends($request->query());
-
-        return view('layouts.inboundList', compact('rosData', 'filterNoRo', 'sort'));
+        return view('layouts.inboundList', compact('rosData'));
     }
 
     // EXPORT INBOUND KE EXCEL
@@ -167,15 +157,9 @@ class QrCodeController extends Controller
     // HALAMAN OUTBOUND LIST
     public function indexOut(Request $request)
     {
-        $query = Qrcode::query();
 
-        if ($request->has('sort') && in_array($request->sort, ['asc', 'desc'])) {
-            $query->orderBy('jenis_material', $request->sort);
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
+        $qrcodes = Qrcode::all();
 
-        $qrcodes = $query->paginate(10);
 
         return view('layouts.outboundList', compact('qrcodes'));
     }
@@ -183,32 +167,17 @@ class QrCodeController extends Controller
     // HALAMAN UPDATE MATERIAL
     public function indexUpdate(Request $request)
     {
-        // Ambil nilai filter dan sort
-        $sort = $request->get('sort', 'asc');
-        $stockStatus = $request->get('stock_status');
+       $qrcodes = Qrcode ::whereNotNull('quantity_in')
+            ->orWhereNotNull('quantity_out')->get();
 
-        // Query dasar untuk Qrcode
-        $qrcodes = Qrcode::whereNotNull('quantity_in')
-            ->whereNotNull('quantity_out') // hanya data yang punya in & out
-            ->orderBy('jenis_material', in_array($sort, ['asc', 'desc']) ? $sort : 'asc');
-
-        // Filter berdasarkan stock status
-        if ($stockStatus === 'empty') {
-            $qrcodes = $qrcodes->whereRaw('quantity_in - quantity_out <= 0');
-        } elseif ($stockStatus === 'available') {
-            $qrcodes = $qrcodes->whereRaw('quantity_in - quantity_out > 0');
-        }
-
-        // Paginasi
-        $qrcodes = $qrcodes->paginate(10);
-
-        return view('layouts.listUpdate', compact('qrcodes', 'sort', 'stockStatus'));
+        return view('layouts.listUpdate', compact('qrcodes'));
     }
 
     // EXPORT DATA MATERIAL UPDATE
     public function exportUpdate()
     {
-        $data = Qrcode::all()->map(function ($item) {
+        $data = Qrcode::whereNotNull('quantity_in')
+            ->orWhereNotNull('quantity_out')->get()->map(function ($item) {
             return [
                 'Jenis Material' => $item->jenis_material,
                 'Quantity In' => $item->quantity_in,
@@ -223,11 +192,13 @@ class QrCodeController extends Controller
         return Excel::download(new IndexExport($data, $headings), 'stock_update_' . date('y-m-d') . '.xlsx');
     }
 
+    
+
     // CHART DASHBOARD
     public function showChart()
     {
         $qrcodes = Qrcode::whereNotNull('quantity_in')
-        ->whereNotNull('quantity_out');
+            ->orWhereNotNull('quantity_out');
         return view('layouts.chartDiagram', compact('qrcodes'));
     }
 }

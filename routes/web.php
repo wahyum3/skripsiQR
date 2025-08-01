@@ -60,7 +60,7 @@ Route::middleware(['web', 'auth', 'user'])->group(function () {
 
     // STOCK UPDATE
     Route::get('/update-list', [QrCodeController::class, 'indexUpdate'])->name('updateList');
-    Route::get('/stock-update/export', [QrCodeController::class, 'exportUpdate'])->name('stock.update.export');
+    Route::get('/update-export', [QrCodeController::class, 'exportUpdate'])->name('update.export');
 
     // DASHBOARD
     Route::get('/dashboard', [QrCodeController::class, 'showChart'])->name('layouts.chartDiagram');
